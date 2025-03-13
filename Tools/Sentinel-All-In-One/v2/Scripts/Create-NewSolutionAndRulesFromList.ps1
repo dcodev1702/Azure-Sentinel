@@ -10,14 +10,20 @@ param(
 $context = Get-AzContext
 
 
-if (!$context) {
+if (!$context -and $IsGov -eq $true) {
+    Write-Host "Connecting to Azure US Gov"
     Connect-AzAccount -Environment AzureUSGovernment
     $context = Get-AzContext
 }
 
 
-Write-Host "Connected to Azure with subscription: " $context.Subscription
 $context = Get-AzContext
+
+$SubscriptionId = $context.Subscription.SubscriptionId
+$SubscriptionName = $context.Subscription.Name
+
+Write-Host "Connected to Azure with subscription: $SubscriptionName -> $SubscriptionId"
+
 $instanceProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
 $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
 $token = $profileClient.AcquireAccessToken($context.Subscription.TenantId)
@@ -25,12 +31,10 @@ $authHeader = @{
     'Content-Type'  = 'application/json' 
     'Authorization' = 'Bearer ' + $token.AccessToken 
 }
-$SubscriptionId = $context.Subscription.Id
 
-$serverUrl = "https://management.azure.com"
-if ($isGov -eq $true) {
-    $serverUrl = "https://management.usgovcloudapi.net"
-}
+
+# Pull the resource manager URL from the current Azure Cloud context
+$serverUrl = $context.Environment.ResourceManagerUrl
 
 $baseUri = $serverUrl + "/subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
 $alertUri = "$baseUri/providers/Microsoft.SecurityInsights/alertRules/"
