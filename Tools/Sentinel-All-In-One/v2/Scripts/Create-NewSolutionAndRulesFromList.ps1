@@ -18,7 +18,7 @@ if (!$context) {
 
 $context = Get-AzContext
 
-$SubscriptionId = $context.Subscription.SubscriptionId
+$SubscriptionId = $(Get-AzContext).Subscription.SubscriptionId
 
 Write-Host "Connected to Azure with subscription: $SubscriptionId"
 
