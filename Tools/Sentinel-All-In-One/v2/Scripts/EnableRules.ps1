@@ -12,9 +12,10 @@ if (!$context) {
     $context = Get-AzContext
 }
 
-$SubscriptionId = $context.Subscription.Id
+$SubscriptionId = $context.Subscription.SubscriptionId
+$SubscriptionName = $context.Subscription.Name
 
-Write-Host "Connected to Azure with subscription: " + $context.Subscription
+Write-Host "Connected to Azure with subscription: $SubscriptionName -> $SubscriptionId" 
 
 $baseUri = "/subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
 $templatesUri = "$baseUri/providers/Microsoft.SecurityInsights/alertRuleTemplates?api-version=2023-04-01-preview"
