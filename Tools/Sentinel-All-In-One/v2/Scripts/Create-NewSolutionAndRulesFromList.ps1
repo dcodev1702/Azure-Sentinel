@@ -27,7 +27,7 @@ $headers.Add("Authorization","Bearer $token")
 
 Write-Host "SubscriptionId: " $SubscriptionId
 Write-Host "TenantId: " $TenantId
-Write-Host "headers:" $headers
+Write-Host "Auth Headers:" $headers
 
 $baseUri = "${resourceManagerUrl}subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
 $alertUri = "$baseUri/providers/Microsoft.SecurityInsights/alertRules/"
