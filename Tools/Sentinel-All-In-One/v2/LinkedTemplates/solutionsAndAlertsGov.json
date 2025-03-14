@@ -62,8 +62,8 @@
     "resources": [
         {
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-            "name": "[variables('identityName')]",
             "apiVersion": "2023-01-31",
+            "name": "[variables('identityName')]",
             "location": "[resourceGroup().location]"
         },
         {
