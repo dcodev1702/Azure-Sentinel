@@ -139,7 +139,7 @@
                 "supportingScriptUris": [],
                 "timeout": "PT30M",
                 "cleanupPreference": "OnExpiration",
-                "retentionInterval": "P1D"
+                "retentionInterval": "P1D",
                 "containerSettings": {
                     "memoryInGb": 3,
                     "cpu": 1
