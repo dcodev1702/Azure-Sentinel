@@ -172,7 +172,7 @@ foreach ($result in $results ) {
             try {
                 Write-Host "Attempting to create rule $($displayName)"
                 $verdict = Invoke-RestMethod -Uri $alertUri -Method Put -Headers $headers -Body ($body | ConvertTo-Json -EnumsAsStrings -Depth 50)
-                #Invoke-RestMethod -Uri $installURL -Method Put -Headers $authHeader -Body ($installBody | ConvertTo-Json -EnumsAsStrings -Depth 50)
+                
                 Write-Output "Succeeded"
                 $solution = $allSolutions.properties | Where-Object -Property "contentId" -Contains $result.properties.packageId
                 $metabody = @{
