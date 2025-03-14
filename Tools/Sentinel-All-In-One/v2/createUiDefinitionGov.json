@@ -573,7 +573,7 @@
         ],
         "outputs": {
             "workspaceName": "[basics('workspaceName')]",
-            "subscriptionId": "[subscription().subscriptionid]"
+            "subscriptionId": "[subscription().subscriptionid]",
             "dailyQuota": "[basics('dailyQuota')]",
             "dataRetention": "[basics('dataRetention')]",
             "pricingTier": "[basics('pricingTier')]",
