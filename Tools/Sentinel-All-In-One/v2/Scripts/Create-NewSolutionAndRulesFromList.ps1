@@ -23,8 +23,8 @@ $instanceProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.
 $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
 $token = $profileClient.AcquireAccessToken($context.Subscription.TenantId)
 
-Write-Host 'TenantId: ' + $($context.Subscription.TenantId)
-Write-Host "TOKEN: ' + $($token.AccessToken)
+Write-Host 'TenantId: " + $($context.Subscription.TenantId)
+Write-Host "TOKEN: " + $($token.AccessToken)
 
 $authHeader = @{
     'Content-Type'  = 'application/json' 
