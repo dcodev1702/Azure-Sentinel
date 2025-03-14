@@ -1,4 +1,5 @@
 param(
+    [Parameter(Mandatory = $true)][string]$SubscriptionId,
     [Parameter(Mandatory = $true)][string]$ResourceGroup,
     [Parameter(Mandatory = $true)][string]$Workspace,
     [Parameter(Mandatory = $true)][string]$Region,
@@ -7,25 +8,17 @@ param(
     [Parameter(Mandatory = $false)][string]$IsGov = $false
 )
 
-$context = Get-AzContext
-
-
-if (!$context -and $IsGov -eq $true) {
-    Write-Host "Connecting to Azure US Gov"
-    Connect-AzAccount -Environment AzureUSGovernment
-    $context = Get-AzContext
-}
-
 # Pull the resource manager URL, TenantId, and SubscriptionId from the current/default Azure Cloud context
 $instanceProfile    = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
 $resourceManagerURL = $instanceProfile.DefaultContext.Environment.ResourceManagerUrl
-$SubscriptionId     = $instanceProfile.DefaultContext.Subscription.Id
+$SubId              = $instanceProfile.DefaultContext.Subscription.Id
 $TenantId           = $instanceProfile.DefaultContext.Tenant.Id
 
 $profileClient   = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
 $token           = $profileClient.AcquireAccessToken($TenantId)
 
-Write-Host "SubscriptionId: $SubscriptionId"
+Write-Host "SubId: " $SubId
+Write-Host "SubscriptionId: " $SubscriptionId
 Write-Host "TenantId: " $TenantId
 Write-Host "TOKEN:" $token.AccessToken
 
