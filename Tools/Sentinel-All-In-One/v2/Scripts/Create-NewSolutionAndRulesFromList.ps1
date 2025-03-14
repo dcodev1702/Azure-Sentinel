@@ -12,7 +12,7 @@ param(
 $context = Get-AzContext
 
 
-if (!$context) {
+if (!$context -and $IsGov -eq $true) {
     Write-Host "Connecting to Azure US Gov"
     Connect-AzAccount -Environment AzureUSGovernment
     $context = Get-AzContext
