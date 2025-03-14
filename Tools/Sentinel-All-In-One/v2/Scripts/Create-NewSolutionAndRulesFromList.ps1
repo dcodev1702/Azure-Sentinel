@@ -34,9 +34,9 @@ $authHeader = @{
 
 
 # Pull the resource manager URL from the current Azure Cloud context
-$serverUrl = $context.Environment.ResourceManagerUrl
+$resourceManagerURL = $context.Environment.ResourceManagerUrl
 
-$baseUri = $serverUrl + "/subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
+$baseUri = "${resourceManagerURL}subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
 $alertUri = "$baseUri/providers/Microsoft.SecurityInsights/alertRules/"
 
 Write-Host " Base Uri: $baseUri"
