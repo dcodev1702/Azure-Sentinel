@@ -24,8 +24,8 @@ $instanceProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.
 $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
 $token = $profileClient.AcquireAccessToken($TenantId)
 
-Write-Host "TenantId: " + $TenantId
-Write-Host "TOKEN: " + $token.AccessToken
+Write-Host "TenantId: " $TenantId
+Write-Host "TOKEN: " $token.AccessToken
 
 $authHeader = @{
     'Content-Type'  = 'application/json' 
@@ -48,7 +48,7 @@ $url = $baseUri + "/providers/Microsoft.SecurityInsights/contentProductPackages?
 
 Write-Host "Content Product Packages Uri: $url"
 
-$allSolutions = $(Invoke-RestMethod -Method "GET" -Uri $url -Headers $authHeader).value
+$allSolutions = (Invoke-RestMethod -Method "Get" -Uri $url -Headers $authHeader).value
 
 #Deploy each single solution
 #$templateParameter = @{"workspace-location" = $Region; workspace = $Workspace }
