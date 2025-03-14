@@ -47,8 +47,12 @@ $url = $baseUri + "/providers/Microsoft.SecurityInsights/contentProductPackages?
 
 Write-Host "Content Product Packages Uri: $url"
 
-$allSolutions = (Invoke-RestMethod -Method "Get" -Uri $url -Headers $authHeader).value
+$response = Invoke-RestMethod -Method "Get" -Uri $url -Headers $authHeader
 
+Write-host "REST API Result: " $response.StatusCode 
+$allSolutions = $response.value
+
+Write-Host "ALL SOLUTIONS: " $allSolutions
 #Deploy each single solution
 #$templateParameter = @{"workspace-location" = $Region; workspace = $Workspace }
 foreach ($deploySolution in $Solutions) {
