@@ -47,10 +47,7 @@ $url = $baseUri + "/providers/Microsoft.SecurityInsights/contentProductPackages?
 
 Write-Host "Content Product Packages Uri: $url"
 
-$response = Invoke-RestMethod -Method "Get" -Uri $url -Headers $authHeader
-
-Write-host "REST API Result: " $response.StatusCode 
-$allSolutions = $response.value
+$allSolutions = (Invoke-RestMethod -Method "Get" -Uri $url -Headers $authHeader).value
 
 Write-Host "ALL SOLUTIONS: " $allSolutions
 #Deploy each single solution
