@@ -21,14 +21,9 @@ $TenantId           = $context.Tenant.Id
 
 $token = (Get-AzAccessToken -ResourceUrl $resourceManagerUrl).Token
 
-#$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-#$headers.Add("Content-Type","application/json")
-#$headers.Add("Authorization","Bearer $token")
-
-$headers = [ordered]@{
-    'Content-Type'  = 'application/json' 
-    'Authorization' = 'Bearer ' + $token 
-}
+$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+$headers.Add("Content-Type","application/json")
+$headers.Add("Authorization","Bearer $token")
 
 Write-Host "SubscriptionId: " $SubscriptionId
 Write-Host "TenantId: " $TenantId
