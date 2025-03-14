@@ -8,26 +8,28 @@ param(
     [Parameter(Mandatory = $false)][string]$IsGov = $false
 )
 
-# Pull the resource manager URL, TenantId, and SubscriptionId from the current/default Azure Cloud context
-$instanceProfile    = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
-$resourceManagerURL = $instanceProfile.DefaultContext.Environment.ResourceManagerUrl
-$SubId              = $instanceProfile.DefaultContext.Subscription.Id
-$TenantId           = $instanceProfile.DefaultContext.Tenant.Id
+$context = Get-AzContext
 
-$profileClient   = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
-$token           = $profileClient.AcquireAccessToken($TenantId)
-
-Write-Host "WHERE AM I?? " $env:AZ_SCRIPTS_AZURE_ENVIRONMENT
-Write-Host "SubscriptionId: " $SubscriptionId
-Write-Host "TenantId: " $TenantId
-Write-Host "TOKEN:" $token.AccessToken
-
-$authHeader = @{
-    'Content-Type'  = 'application/json' 
-    'Authorization' = 'Bearer ' + $token.AccessToken 
+if ($context.Environment.Name -ne 'AzureUSGovernment') {
+    Connect-AzAccount -Environment AzureUSGovernment
 }
 
-$baseUri = "${resourceManagerURL}subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
+$context = Get-AzContext
+
+$resourceManagerUrl = $context.Environment.ResourceManagerUrl
+$TenantId           = $context.Tenant.Id
+
+$token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token | Out-Null
+
+$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+$headers.Add("Content-Type","application/json")
+$headers.Add("Authorization","Bearer $token")
+
+Write-Host "SubscriptionId: " $SubscriptionId
+Write-Host "TenantId: " $TenantId
+Write-Host "TOKEN:" $token
+
+$baseUri = "${resourceManagerUrl}subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
 $alertUri = "$baseUri/providers/Microsoft.SecurityInsights/alertRules/"
 
 Write-Host "Base Uri: $baseUri"
@@ -36,7 +38,7 @@ $url = $baseUri + "/providers/Microsoft.SecurityInsights/contentProductPackages?
 
 Write-Host "Content Product Packages Uri: $url"
 
-$allSolutions = (Invoke-RestMethod -Method "Get" -Uri $url -Headers $authHeader).value | ConvertTo-Json -Depth 25
+$allSolutions = (Invoke-RestMethod -Method "Get" -Uri $url -Headers $headers).value
 
 Write-Host "ALL SOLUTIONS: " $allSolutions
 #Deploy each single solution
