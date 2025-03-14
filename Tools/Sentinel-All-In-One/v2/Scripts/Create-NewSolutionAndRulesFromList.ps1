@@ -1,5 +1,4 @@
 param(
-    [Parameter(Mandatory = $true)][string]$SubscriptionId,
     [Parameter(Mandatory = $true)][string]$ResourceGroup,
     [Parameter(Mandatory = $true)][string]$Workspace,
     [Parameter(Mandatory = $true)][string]$Region,
@@ -11,21 +10,15 @@ param(
 $context = Get-AzContext
 
 
-if (!$context -and $IsGov -eq $true) {
+if (!$context) {
     Write-Host "Connecting to Azure US Gov"
     Connect-AzAccount -Environment AzureUSGovernment
     $context = Get-AzContext
 }
 
-
 $context = Get-AzContext
 
-
-$SubscriptionId = $SubscriptionId -replace "-Workspace", ""
-
-
-# $SubscriptionId = $context.Subscription.SubscriptionId
-# $SubscriptionName = $context.Subscription.Name
+$SubscriptionId = $context.Subscription.SubscriptionId
 
 Write-Host "Connected to Azure with subscription: $SubscriptionId"
 
