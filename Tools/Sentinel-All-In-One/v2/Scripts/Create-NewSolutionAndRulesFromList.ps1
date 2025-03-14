@@ -29,7 +29,7 @@ Write-Host "TOKEN: " $token.AccessToken
 
 $authHeader = @{
     'Content-Type'  = 'application/json' 
-    'Authorization' = 'Bearer ' + $token.AccessToken 
+    'Authorization' = 'Bearer ' $token.AccessToken 
 }
 
 #$SubscriptionId = $(Get-AzContext).Subscription.SubscriptionId
