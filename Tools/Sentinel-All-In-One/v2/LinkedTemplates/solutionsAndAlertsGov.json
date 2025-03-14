@@ -90,7 +90,6 @@
                 "scope": "[subscription().subscriptionId]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
             ]
         },
