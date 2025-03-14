@@ -24,9 +24,6 @@ $instanceProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.
 $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
 $token = $profileClient.AcquireAccessToken($TenantId)
 
-Write-Host "INSIDE CONTAINER -> SUBSCRIPTION-ID: ${env:ACC_USER_SUBSCRIPTION}"
-Write-Host "INSIDE CONTAINER -> TENANT-ID: ${env:ACC_TID}"
-
 Write-Host "TenantId: " $TenantId
 Write-Host "TOKEN: " $token.AccessToken
 
