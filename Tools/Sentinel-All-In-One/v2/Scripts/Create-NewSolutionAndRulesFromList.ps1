@@ -27,7 +27,7 @@ $headers.Add("Authorization","Bearer $token")
 
 Write-Host "SubscriptionId: " $SubscriptionId
 Write-Host "TenantId: " $TenantId
-Write-Host "TOKEN:" $token
+Write-Host "headers:" $headers
 
 $baseUri = "${resourceManagerUrl}subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
 $alertUri = "$baseUri/providers/Microsoft.SecurityInsights/alertRules/"
@@ -51,7 +51,7 @@ foreach ($deploySolution in $Solutions) {
     }
     else {
         $solutionURL = $baseUri + "/providers/Microsoft.SecurityInsights/contentProductPackages/$($singleSolution.name)?api-version=2024-03-01"
-        $solution = (Invoke-RestMethod -Method "Get" -Uri $solutionURL -Headers $authHeader )
+        $solution = (Invoke-RestMethod -Method "Get" -Uri $solutionURL -Headers $headers)
         Write-Host "Solution name: " $solution.name
         $packagedContent = $solution.properties.packagedContent
         #Some of the post deployment instruction contains invalid characters and since this is not displayed anywhere
@@ -74,13 +74,13 @@ foreach ($deploySolution in $Solutions) {
         if ($deploymentName.Length -ge 64) {
             $deploymentName = $deploymentName.Substring(0, 64)
         }
-        $installURL = $serverUrl + "/subscriptions/$($SubscriptionId)/resourcegroups/$($ResourceGroup)/providers/Microsoft.Resources/deployments/" + $deploymentName + "?api-version=2021-04-01"
+        $installURL = "${resourceManagerUrl}subscriptions/${SubscriptionId}/resourcegroups/${ResourceGroup}/providers/Microsoft.Resources/deployments/${deploymentName}?api-version=2021-04-01"
         #$templateUri = $singleSolution.plans.artifacts | Where-Object -Property "name" -EQ "DefaultTemplate"
         Write-Host "Deploying solution:  $deploySolution"
         Write-Host "Deploy URL: $installURL"
         
         try {
-            Invoke-RestMethod -Uri $installURL -Method Put -Headers $authHeader -Body ($installBody | ConvertTo-Json -EnumsAsStrings -Depth 50 -EscapeHandling EscapeNonAscii)
+            Invoke-RestMethod -Uri $installURL -Method Put -Headers $headers -Body ($installBody | ConvertTo-Json -EnumsAsStrings -Depth 50 -EscapeHandling EscapeNonAscii)
             Write-Host "Deployed solution:  $deploySolution"
         }
         catch {
@@ -107,7 +107,7 @@ $solutionURL = $baseUri + "/providers/Microsoft.SecurityInsights/contentTemplate
 #Add a filter only return analytic rule templates
 $solutionURL += "&%24filter=(properties%2FcontentKind%20eq%20'AnalyticsRule')"
 
-$results = (Invoke-RestMethod -Uri $solutionURL -Method Get -Headers $authHeader).value
+$results = (Invoke-RestMethod -Uri $solutionURL -Method Get -Headers $headers).value
   
 $BaseAlertUri = $baseUri + "/providers/Microsoft.SecurityInsights/alertRules/"
 $BaseMetaURI = $baseURI + "/providers/Microsoft.SecurityInsights/metadata/analyticsrule-"
@@ -171,7 +171,7 @@ foreach ($result in $results ) {
             $alertUri = $BaseAlertUri + $guid + "?api-version=2022-12-01-preview"
             try {
                 Write-Host "Attempting to create rule $($displayName)"
-                $verdict = Invoke-RestMethod -Uri $alertUri -Method Put -Headers $authHeader -Body ($body | ConvertTo-Json -EnumsAsStrings -Depth 50)
+                $verdict = Invoke-RestMethod -Uri $alertUri -Method Put -Headers $headers -Body ($body | ConvertTo-Json -EnumsAsStrings -Depth 50)
                 #Invoke-RestMethod -Uri $installURL -Method Put -Headers $authHeader -Body ($installBody | ConvertTo-Json -EnumsAsStrings -Depth 50)
                 Write-Output "Succeeded"
                 $solution = $allSolutions.properties | Where-Object -Property "contentId" -Contains $result.properties.packageId
@@ -192,7 +192,7 @@ foreach ($result in $results ) {
                 }
                 Write-Output "    Updating metadata...."
                 $metaURI = $BaseMetaURI + $verdict.name + "?api-version=2022-01-01-preview"
-                $metaVerdict = Invoke-RestMethod -Uri $metaURI -Method Put -Headers $authHeader -Body ($metabody | ConvertTo-Json -EnumsAsStrings -Depth 5)
+                $metaVerdict = Invoke-RestMethod -Uri $metaURI -Method Put -Headers $headers -Body ($metabody | ConvertTo-Json -EnumsAsStrings -Depth 5)
                 Write-Output "Succeeded"
             }
             catch {
