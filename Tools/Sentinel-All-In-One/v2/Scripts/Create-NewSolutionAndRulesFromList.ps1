@@ -22,6 +22,10 @@ $context = Get-AzContext
 $instanceProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
 $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
 $token = $profileClient.AcquireAccessToken($context.Subscription.TenantId)
+
+Write-Host 'TenantId: ' + $($context.Subscription.TenantId)
+Write-Host "TOKEN: ' + $($token.AccessToken)
+
 $authHeader = @{
     'Content-Type'  = 'application/json' 
     'Authorization' = 'Bearer ' + $token.AccessToken 
@@ -36,13 +40,14 @@ $resourceManagerURL = $context.Environment.ResourceManagerUrl
 $baseUri = "${resourceManagerURL}subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
 $alertUri = "$baseUri/providers/Microsoft.SecurityInsights/alertRules/"
 
-Write-Host " Base Uri: $baseUri"
+Write-Host "Base Uri: $baseUri"
 # Get a list of all the solutions
-$url = $baseUri + "/providers/Microsoft.SecurityInsights/contentProductPackages?api-version=2024-03-01"
+#$url = $baseUri + "/providers/Microsoft.SecurityInsights/contentProductPackages?api-version=2024-03-01"
+$url = $baseUri + "/providers/Microsoft.SecurityInsights/contentProductPackages?api-version=2024-09-01"
 
-Write-Host " Content Product Packages Uri: $url"
+Write-Host "Content Product Packages Uri: $url"
 
-$allSolutions = (Invoke-RestMethod -Method "Get" -Uri $url -Headers $authHeader ).value
+$allSolutions = $(Invoke-RestMethod -Method "GET" -Uri $url -Headers $authHeader).value
 
 #Deploy each single solution
 #$templateParameter = @{"workspace-location" = $Region; workspace = $Workspace }
