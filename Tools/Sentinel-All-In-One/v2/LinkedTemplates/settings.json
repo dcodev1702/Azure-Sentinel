@@ -38,7 +38,8 @@
             "apiVersion": "2022-09-01-preview",
             "name": "playbookPermissions",
             "properties": {
-            "playbookResourceGroupId": "[resourceGroup().id]"
+               "playbookResourceGroupId": "[resourceGroup().id]"
+            }
         },
         {
             "condition": "[parameters('enableUeba')]",
