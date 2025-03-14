@@ -20,10 +20,14 @@ if (!$context -and $IsGov -eq $true) {
 
 $context = Get-AzContext
 
-# $SubscriptionId = $context.Subscription.SubscriptionId
-$SubscriptionName = $context.Subscription.Name
 
-Write-Host "Connected to Azure with subscription: $SubscriptionName -> $SubscriptionId"
+$SubscriptionId = $SubscriptionId -replace "-Workspace", ""
+
+
+# $SubscriptionId = $context.Subscription.SubscriptionId
+# $SubscriptionName = $context.Subscription.Name
+
+Write-Host "Connected to Azure with subscription: $SubscriptionId"
 
 $instanceProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
 $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
