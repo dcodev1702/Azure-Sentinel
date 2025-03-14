@@ -16,13 +16,14 @@ if (!$context -and $IsGov -eq $true) {
     $context = Get-AzContext
 }
 
+# Pull the resource manager URL, TenantId, and SubscriptionId from the current/default Azure Cloud context
+$instanceProfile    = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
+$resourceManagerURL = $instanceProfile.DefaultContext.Environment.ResourceManagerUrl
+$SubscriptionId     = $instanceProfile.DefaultContext.Subscription.Id
+$TenantId           = $instanceProfile.DefaultContext.Tenant.Id
 
-$instanceProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
-$profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
-$token = $profileClient.AcquireAccessToken($TenantId)
-
-$TenantId = $instanceProfile.DefaultContext.Tenant.Id
-$SubscriptionId = $instanceProfile.DefaultContext.Subscription.Id
+$profileClient   = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
+$token           = $profileClient.AcquireAccessToken($TenantId)
 
 Write-Host "SubscriptionId: $SubscriptionId"
 Write-Host "TenantId: " $TenantId
@@ -32,9 +33,6 @@ $authHeader = @{
     'Content-Type'  = 'application/json' 
     'Authorization' = 'Bearer ' + $token.AccessToken 
 }
-
-# Pull the resource manager URL from the current Azure Cloud context
-$resourceManagerURL = $instanceProfile.DefaultContext.Environment.ResourceManagerUrl
 
 $baseUri = "${resourceManagerURL}subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
 $alertUri = "$baseUri/providers/Microsoft.SecurityInsights/alertRules/"
