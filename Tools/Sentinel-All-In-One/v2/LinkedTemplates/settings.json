@@ -34,6 +34,13 @@
     },
     "resources": [
         {
+            "type": "Microsoft.SecurityInsights/settings",
+            "apiVersion": "2022-09-01-preview",
+            "name": "playbookPermissions",
+            "properties": {
+            "playbookResourceGroupId": "[resourceGroup().id]"
+        },
+        {
             "condition": "[parameters('enableUeba')]",
             "type": "Microsoft.SecurityInsights/settings",
             "apiVersion": "2022-12-01-preview",
