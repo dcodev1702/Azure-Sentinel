@@ -1,4 +1,5 @@
 param(
+    [Parameter(Mandatory = $true)][string]$TenantId,
     [Parameter(Mandatory = $true)][string]$SubscriptionId,
     [Parameter(Mandatory = $true)][string]$ResourceGroup,
     [Parameter(Mandatory = $true)][string]$Workspace,
@@ -21,9 +22,9 @@ $context = Get-AzContext
 
 $instanceProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
 $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
-$token = $profileClient.AcquireAccessToken($context.Subscription.TenantId)
+$token = $profileClient.AcquireAccessToken($TenantId)
 
-Write-Host "TenantId: " + $context.Subscription.TenantId
+Write-Host "TenantId: " + $TenantId
 Write-Host "TOKEN: " + $token.AccessToken
 
 $authHeader = @{
