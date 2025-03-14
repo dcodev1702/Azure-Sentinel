@@ -19,7 +19,7 @@ $context = Get-AzContext
 $resourceManagerUrl = $context.Environment.ResourceManagerUrl
 $TenantId           = $context.Tenant.Id
 
-$token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token | Out-Null
+$token = (Get-AzAccessToken -ResourceUrl $resourceManagerUrl).Token
 
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Content-Type","application/json")
