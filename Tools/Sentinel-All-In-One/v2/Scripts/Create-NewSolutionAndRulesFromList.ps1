@@ -43,8 +43,7 @@ $alertUri = "$baseUri/providers/Microsoft.SecurityInsights/alertRules/"
 
 Write-Host "Base Uri: $baseUri"
 # Get a list of all the solutions
-#$url = $baseUri + "/providers/Microsoft.SecurityInsights/contentProductPackages?api-version=2024-03-01"
-$url = $baseUri + "/providers/Microsoft.SecurityInsights/contentProductPackages?api-version=2024-09-01"
+$url = $baseUri + "/providers/Microsoft.SecurityInsights/contentProductPackages?api-version=2024-03-01"
 
 Write-Host "Content Product Packages Uri: $url"
 
