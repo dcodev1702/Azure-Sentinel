@@ -45,16 +45,11 @@
         "OwnerRoleGuid": {
             "type": "string",
             "defaultValue": "[guid(subscription().id, '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]"
-        },
-        "SARoleGuid": {
-            "type": "string",
-            "defaultValue": "[guid(subscription().id, 'fb1c8493-542b-48eb-b624-b4c8fea62acd')]"
         }
     },
     "functions": [],
     "variables": {
         "identityName": "[concat('userIdentity',uniqueString(resourceGroup().id))]",
-        "SARoleGuidId": "[if(empty(parameters('SARoleGuid')), guid(subscription().id, 'userIdentity', 'fb1c8493-542b-48eb-b624-b4c8fea62acd'), parameters('SARoleGuid'))]",
         "OwnerRoleGuidId": "[if(empty(parameters('OwnerRoleGuid')), guid(subscription().id, 'userIdentity', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'), parameters('OwnerRoleGuid'))]",
         "solutions": "[replace(concat(parameters('enableSolutions1P'),if(and(not(empty(parameters('enableSolutions1P'))),not(empty(parameters('enableSolutionsEssentials')))),concat(',',parameters('enableSolutionsEssentials')),parameters('enableSolutionsEssentials')),if(or(not(empty(parameters('enableSolutionsEssentials'))),not(empty(parameters('enableSolutions1P')))),concat(',',parameters('enableSolutionsTraining')),parameters('enableSolutionsTraining'))),'\"','\\\"')]",
         "severities": "[if(empty(parameters('severityLevels')),'None',parameters('severityLevels'))]"
@@ -65,19 +60,6 @@
             "apiVersion": "2023-01-31",
             "name": "[variables('identityName')]",
             "location": "[resourceGroup().location]"
-        },
-        {
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2022-04-01",
-            "name": "[variables('SARoleGuidId')]",
-            "properties": {
-                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'fb1c8493-542b-48eb-b624-b4c8fea62acd')]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2022-04-01', 'Full').properties.principalId]",
-                "scope": "[subscription().subscriptionId]"
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
-            ]
         },
         {
             "type": "Microsoft.Authorization/roleAssignments",
