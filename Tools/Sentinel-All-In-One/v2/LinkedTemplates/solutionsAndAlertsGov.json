@@ -42,15 +42,20 @@
         "location": {
             "type": "string"
         },
-        "roleGuid": {
+        "OwnerRoleGuid": {
             "type": "string",
             "defaultValue": "[guid(resourceGroup().id, '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]"
+        },
+        "SARoleGuid": {
+            "type": "string",
+            "defaultValue": "[guid(resourceGroup().id, 'fb1c8493-542b-48eb-b624-b4c8fea62acd')]"
         }
     },
     "functions": [],
     "variables": {
         "identityName": "[concat('userIdentity',uniqueString(resourceGroup().id))]",
-        "roleGuidId": "[if(empty(parameters('roleGuid')), guid(resourceGroup().id, 'userIdentity', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'), parameters('roleGuid'))]",
+        "SARoleGuidId": "[if(empty(parameters('SARoleGuid')), guid(resourceGroup().id, 'userIdentity', 'fb1c8493-542b-48eb-b624-b4c8fea62acd'), parameters('SARoleGuid'))]",
+        "OwnerRoleGuidId": "[if(empty(parameters('OwnerRoleGuid')), guid(resourceGroup().id, 'userIdentity', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'), parameters('OwnerRoleGuid'))]",
         "solutions": "[replace(concat(parameters('enableSolutions1P'),if(and(not(empty(parameters('enableSolutions1P'))),not(empty(parameters('enableSolutionsEssentials')))),concat(',',parameters('enableSolutionsEssentials')),parameters('enableSolutionsEssentials')),if(or(not(empty(parameters('enableSolutionsEssentials'))),not(empty(parameters('enableSolutions1P')))),concat(',',parameters('enableSolutionsTraining')),parameters('enableSolutionsTraining'))),'\"','\\\"')]",
         "severities": "[if(empty(parameters('severityLevels')),'None',parameters('severityLevels'))]"
     },
@@ -58,7 +63,7 @@
         {
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
             "name": "[variables('identityName')]",
-            "apiVersion": "2024-11-30",
+            "apiVersion": "2018-11-30",
             "location": "[resourceGroup().location]"
         },
         {
@@ -83,19 +88,36 @@
         },
         {
             "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2022-05-01-preview",
-            "name": "[variables('roleGuidId')]",
+            "apiVersion": "2020-04-01-preview",
+            "name": "[variables('SARoleGuidId')]",
             "properties": {
-                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2024-11-30', 'Full').properties.principalId]",
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'fb1c8493-542b-48eb-b624-b4c8fea62acd')]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30', 'Full').properties.principalId]",
                 "scope": "[subscription().subscriptionId]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]"
+                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+                
+            ]
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2020-04-01-preview",
+            "name": "[variables('OwnerRoleGuidId')]",
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30', 'Full').properties.principalId]",
+                "scope": "[subscription().subscriptionId]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
             ]
         },
         {
             "dependsOn": [
+                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
             ],
             "type": "Microsoft.Resources/deploymentScripts",
