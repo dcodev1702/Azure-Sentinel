@@ -17,7 +17,7 @@ $TenantId           = $instanceProfile.DefaultContext.Tenant.Id
 $profileClient   = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
 $token           = $profileClient.AcquireAccessToken($TenantId)
 
-Write-Host "SubId: " $SubId
+Write-Host "WHERE AM I?? " $env:AZ_SCRIPTS_AZURE_ENVIRONMENT
 Write-Host "SubscriptionId: " $SubscriptionId
 Write-Host "TenantId: " $TenantId
 Write-Host "TOKEN:" $token.AccessToken
