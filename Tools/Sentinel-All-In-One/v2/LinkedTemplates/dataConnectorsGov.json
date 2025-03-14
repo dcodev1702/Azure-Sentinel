@@ -26,14 +26,14 @@
             "type": "string",
             "defaultValue": "[subscription().tenantId]",
             "metadata": {
-                "description": "Azure AD tenant ID"
+                "description": "Entra ID tenant ID"
             }
         },
         "subscriptionId": {
             "type": "string",
             "defaultValue": "[subscription().subscriptionId]",
             "metadata": {
-                "description": "Sbscription Id to monitor"
+                "description": "Subscription Id to monitor"
             }
         },
         "location": {
