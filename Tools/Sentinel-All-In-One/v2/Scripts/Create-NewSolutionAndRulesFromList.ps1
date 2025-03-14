@@ -1,4 +1,5 @@
 param(
+    [Parameter(Mandatory = $true)][string]$SubscriptionId,
     [Parameter(Mandatory = $true)][string]$ResourceGroup,
     [Parameter(Mandatory = $true)][string]$Workspace,
     [Parameter(Mandatory = $true)][string]$Region,
@@ -18,10 +19,6 @@ if (!$context) {
 
 $context = Get-AzContext
 
-$SubscriptionId = $(Get-AzContext).Subscription.SubscriptionId
-
-Write-Host "Connected to Azure with subscription: $SubscriptionId"
-
 $instanceProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
 $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
 $token = $profileClient.AcquireAccessToken($context.Subscription.TenantId)
@@ -30,6 +27,8 @@ $authHeader = @{
     'Authorization' = 'Bearer ' + $token.AccessToken 
 }
 
+#$SubscriptionId = $(Get-AzContext).Subscription.SubscriptionId
+Write-Host "Connected to Azure with subscription: $SubscriptionId"
 
 # Pull the resource manager URL from the current Azure Cloud context
 $resourceManagerURL = $context.Environment.ResourceManagerUrl
