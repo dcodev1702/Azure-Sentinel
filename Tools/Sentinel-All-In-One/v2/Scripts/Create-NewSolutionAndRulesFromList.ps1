@@ -1,6 +1,4 @@
 param(
-    [Parameter(Mandatory = $true)][string]$TenantId,
-    [Parameter(Mandatory = $true)][string]$SubscriptionId,
     [Parameter(Mandatory = $true)][string]$ResourceGroup,
     [Parameter(Mandatory = $true)][string]$Workspace,
     [Parameter(Mandatory = $true)][string]$Region,
@@ -18,25 +16,25 @@ if (!$context -and $IsGov -eq $true) {
     $context = Get-AzContext
 }
 
-$context = Get-AzContext
 
 $instanceProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
 $profileClient = New-Object -TypeName Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient -ArgumentList ($instanceProfile)
 $token = $profileClient.AcquireAccessToken($TenantId)
 
+$TenantId = $instanceProfile.DefaultContext.Tenant.Id
+$SubscriptionId = $instanceProfile.DefaultContext.Subscription.Id
+
+Write-Host "SubscriptionId: $SubscriptionId"
 Write-Host "TenantId: " $TenantId
-Write-Host "TOKEN: " $token.AccessToken
+Write-Host "TOKEN:" $token.AccessToken
 
 $authHeader = @{
     'Content-Type'  = 'application/json' 
     'Authorization' = 'Bearer ' + $token.AccessToken 
 }
 
-#$SubscriptionId = $(Get-AzContext).Subscription.SubscriptionId
-Write-Host "Connected to Azure with subscription: $SubscriptionId"
-
 # Pull the resource manager URL from the current Azure Cloud context
-$resourceManagerURL = $context.Environment.ResourceManagerUrl
+$resourceManagerURL = $instanceProfile.DefaultContext.Environment.ResourceManagerUrl
 
 $baseUri = "${resourceManagerURL}subscriptions/${SubscriptionId}/resourceGroups/${ResourceGroup}/providers/Microsoft.OperationalInsights/workspaces/${Workspace}"
 $alertUri = "$baseUri/providers/Microsoft.SecurityInsights/alertRules/"
