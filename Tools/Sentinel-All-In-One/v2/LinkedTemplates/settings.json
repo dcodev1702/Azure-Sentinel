@@ -51,8 +51,7 @@
             "name": "[concat('BehaviorAnalyticsInsights','(', parameters('workspaceName'),')')]",
             "location": "[resourceGroup().location]",
             "properties":{
-                "workspaceResourceId":"[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]",
-                "etag": "*"
+                "workspaceResourceId":"[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
             },
             "plan":{
                 "name":"[concat('BehaviorAnalyticsInsights','(', parameters('workspaceName'),')')]",
