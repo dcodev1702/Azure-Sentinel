@@ -1,5 +1,4 @@
 param(
-    [Parameter(Mandatory = $true)][string]$SubscriptionId,
     [Parameter(Mandatory = $true)][string]$ResourceGroup,
     [Parameter(Mandatory = $true)][string]$Workspace,
     [Parameter(Mandatory = $true)][string]$Region,
@@ -17,6 +16,7 @@ if ($context.Environment.Name -ne 'AzureUSGovernment') {
 $context = Get-AzContext
 
 $resourceManagerUrl = $context.Environment.ResourceManagerUrl
+$SubscriptionId     = $context.Subscription.Id
 $TenantId           = $context.Tenant.Id
 
 $token = (Get-AzAccessToken -ResourceUrl $resourceManagerUrl).Token
