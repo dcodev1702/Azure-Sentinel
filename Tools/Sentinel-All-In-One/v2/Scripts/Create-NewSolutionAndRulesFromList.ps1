@@ -8,7 +8,7 @@ param(
 
 $context = Get-AzContext
 
-if ($context.Environment.Name -ne 'AzureUSGovernment') {
+if ($context -eq $null) {
     Connect-AzAccount -Environment AzureUSGovernment
 }
 
