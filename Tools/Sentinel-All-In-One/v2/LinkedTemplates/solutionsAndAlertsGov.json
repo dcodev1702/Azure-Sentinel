@@ -41,11 +41,16 @@
         },
         "location": {
             "type": "string"
+        },
+        "UIRoleGuid": {
+            "type": "string",
+            "defaultValue": "[guid(resourceGroup().id, 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
         }
     },
     "functions": [],
     "variables": {
         "identityName": "[concat('userIdentity',uniqueString(resourceGroup().id))]",
+        "UIRoleGuidId": "[if(empty(parameters('UIRoleGuid')), guid(resourceGroup().id, 'userIdentity', 'b24988ac-6180-42a0-ab88-20f7382dd24c'), parameters('UIRoleGuid'))]",
         "solutions": "[replace(concat(parameters('enableSolutions1P'),if(and(not(empty(parameters('enableSolutions1P'))),not(empty(parameters('enableSolutionsEssentials')))),concat(',',parameters('enableSolutionsEssentials')),parameters('enableSolutionsEssentials')),if(or(not(empty(parameters('enableSolutionsEssentials'))),not(empty(parameters('enableSolutions1P')))),concat(',',parameters('enableSolutionsTraining')),parameters('enableSolutionsTraining'))),'\"','\\\"')]",
         "severities": "[if(empty(parameters('severityLevels')),'None',parameters('severityLevels'))]"
     },
@@ -55,19 +60,6 @@
             "apiVersion": "2023-01-31",
             "name": "[variables('identityName')]",
             "location": "[resourceGroup().location]"
-        },
-        {
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2022-04-01",
-            "name": "[guid(concat(variables('identityName'), '8e3af657-a8ff-443c-a75c-2fe8c4bcb635', subscription().subscriptionId))]",
-            "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2023-01-31', 'Full').properties.principalId]",
-                "scope": "[subscription().subscriptionId]"
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
-            ]
         },
         {
             "dependsOn": [
@@ -90,10 +82,20 @@
             }
         },
         {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[variables('UIRoleGuidId')]",
+            "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2023-01-31', 'Full').properties.principalId]",
+                "scope": "[resourceGroup().id]"
+            },
             "dependsOn": [
-                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]",
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
-            ],
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
+                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]"
+            ]
+        },
+        {
             "type": "Microsoft.Resources/deploymentScripts",
             "apiVersion": "2020-10-01",
             "name": "deployRules",
@@ -114,7 +116,11 @@
                 "timeout": "PT30M",
                 "cleanupPreference": "OnExpiration",
                 "retentionInterval": "P1D"
-            }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+            ]
         }
     ],
     "outputs": {}
