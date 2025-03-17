@@ -44,13 +44,13 @@
         },
         "UIRoleGuid": {
             "type": "string",
-            "defaultValue": "[guid(subscription().subscriptionId, '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]"
+            "defaultValue": "[guid(resourceGroup().id, '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]"
         }
     },
     "functions": [],
     "variables": {
         "identityName": "[concat('userIdentity',uniqueString(resourceGroup().id))]",
-        "UIRoleGuidId": "[if(empty(parameters('UIRoleGuid')), guid(subscription().subscriptionId, 'userIdentity', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'), parameters('UIRoleGuid'))]",
+        "UIRoleGuidId": "[if(empty(parameters('UIRoleGuid')), guid(resourceGroup().id, 'userIdentity', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'), parameters('UIRoleGuid'))]",
         "solutions": "[replace(concat(parameters('enableSolutions1P'),if(and(not(empty(parameters('enableSolutions1P'))),not(empty(parameters('enableSolutionsEssentials')))),concat(',',parameters('enableSolutionsEssentials')),parameters('enableSolutionsEssentials')),if(or(not(empty(parameters('enableSolutionsEssentials'))),not(empty(parameters('enableSolutions1P')))),concat(',',parameters('enableSolutionsTraining')),parameters('enableSolutionsTraining'))),'\"','\\\"')]",
         "severities": "[if(empty(parameters('severityLevels')),'None',parameters('severityLevels'))]"
     },
@@ -88,7 +88,7 @@
             "properties": {
                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
                 "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2023-01-31', 'Full').properties.principalId]",
-                "scope": "[subscription().subscriptionId]"
+                "scope": "[resourceGroup.id]"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]",
