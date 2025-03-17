@@ -97,7 +97,8 @@
         },
         {
             "dependsOn": [
-                "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]"
+                "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]",
+                "[concat('Microsoft.Resources/deploymentScripts/', 'sleep')]"
             ],
             "type": "Microsoft.Resources/deploymentScripts",
             "apiVersion": "2020-10-01",
