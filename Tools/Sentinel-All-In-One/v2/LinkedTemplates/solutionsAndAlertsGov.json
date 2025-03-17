@@ -63,7 +63,7 @@
             "kind": "AzurePowerShell",
             "properties": {
                   "azPowerShellVersion": "5.9",
-                  "scriptContent": "if ((Get-AzResourceProvider -ProviderNamespace Microsoft.Subscription).RegistrationState -ne 'Registered') { Register-AzResourceProvider -ProviderNamespace Microsoft.Subscription; Write-Output 'Registering the Microsoft.Subscription Resource Provider.' } else { Write-Output 'Microsoft.Subscription Resource Provider is already registered.' }",
+                  "scriptContent": "if ((Get-AzResourceProvider -ProviderNamespace Microsoft.Subscription).RegistrationState -ne 'Registered') { Register-AzResourceProvider -ProviderNamespace Microsoft.Subscription; Write-Output 'Registering the Microsoft.Subscription Resource Provider.'; Start-Sleep -Seconds 60 } else { Write-Output 'Microsoft.Subscription Resource Provider is already registered.' }",
                   "timeout": "PT15M",
                   "cleanupPreference": "OnSuccess",
                   "retentionInterval": "P1D"
