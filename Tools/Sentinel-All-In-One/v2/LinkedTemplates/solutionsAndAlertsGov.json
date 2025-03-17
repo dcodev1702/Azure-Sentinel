@@ -98,7 +98,6 @@
         {
             "type": "Microsoft.Resources/deploymentScripts",
             "apiVersion": "2020-10-01",
-            "resourceGroup": "[parameters('rgName')]",
             "name": "deployRules",
             "location": "[resourceGroup().location]",
             "kind": "AzurePowerShell",
