@@ -56,6 +56,20 @@
     },
     "resources": [
         {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2023-08-01",
+            "name": "RegisterMicrosoftSubscription",
+            "location": "[resourceGroup().location]",
+            "kind": "AzurePowerShell",
+            "properties": {
+                  "azPowerShellVersion": "5.9",
+                  "scriptContent": "if ((Get-AzResourceProvider -ProviderNamespace Microsoft.Subscription).RegistrationState -ne 'Registered') { Register-AzResourceProvider -ProviderNamespace Microsoft.Subscription; Write-Output 'Registering the Microsoft.Subscription Resource Provider.' } else { Write-Output 'Microsoft.Subscription Resource Provider is already registered.' }",
+                  "timeout": "PT15M",
+                  "cleanupPreference": "OnSuccess",
+                  "retentionInterval": "P1D"
+              }
+        },
+        {
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
             "apiVersion": "2023-01-31",
             "name": "[variables('identityName')]",
